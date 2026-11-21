@@ -131,3 +131,15 @@ export const EndCards: React.FC<{ T: number; a: number; q: number; end: number }
     </div>
   );
 };
+
+/** A big year marker at the top of the frame (2020, 2026). */
+export const YearBadge: React.FC<{ T: number; a: number; b: number; year: string }> = ({ T, a, b, year }) => {
+  const o = fade(T, a, b, 0.45);
+  if (o <= 0) return null;
+  const k = Math.min(1, (T - a) / 0.6);
+  return (
+    <div style={{ position: "absolute", left: 0, right: 0, top: 250, textAlign: "center", opacity: o, fontFamily: `${POPPINS}, sans-serif`, textShadow: SUB_SHADOW }}>
+      <div style={{ fontSize: 150, fontWeight: 700, color: GOLD, letterSpacing: 4, transform: `translateY(${(1 - k) * 18}px)` }}>{year}</div>
+    </div>
+  );
+};

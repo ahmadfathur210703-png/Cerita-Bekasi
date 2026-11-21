@@ -222,8 +222,8 @@ export const Stage: React.FC<StageProps> = ({ shot, look, shadowBox, frame, chil
     composer.addPass(new ShaderPass(NanGuardShader));
     const gtao = new GTAOPass(scene, camera, w, h);
     gtao.blendIntensity = 0.8;
-    gtao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.4, thickness: 1.6, scale: 1.0, samples: 16, distanceFallOff: 1.0, screenSpaceRadius: false });
-    gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 5, rings: 2, samples: 16 });
+    gtao.updateGtaoMaterial({ radius: 1.6, distanceExponent: 1.4, thickness: 1.6, scale: 1.0, samples: 8, distanceFallOff: 1.0, screenSpaceRadius: false });
+    gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 4, rings: 2, samples: 8 });
     composer.addPass(withoutFx(gtao, camera));
     const dof = withoutFx(new BokehPass(scene, camera, { focus: 20, aperture: 0.0, maxblur: 0.0 }), camera);
     composer.addPass(dof);

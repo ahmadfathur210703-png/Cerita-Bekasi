@@ -173,7 +173,7 @@ const Poles: React.FC = () => {
 // ── Pole signs + traffic light ───────────────────────────────────────────────
 
 const POLE_SIGNS = {
-  ramayana: { w: 5.2, h: 5.2, bg: "#d42a22", lines: [{ text: "Ramayana", color: "#ffffff", size: 0.95, weight: 600 }], ppm: 80, border: "#ffffff", lit: 1.3 } as SignSpec,
+  ramayana: { w: 5.2, h: 5.2, bg: "#d42a22", lines: [{ text: "Ramayana", color: "#ffffff", size: 0.95, weight: 600 }], ppm: 80, border: "#ffffff", group: "tenant", lit: 1.3 } as SignSpec,
   lotte: {
     w: 4.4,
     h: 5.4,
@@ -184,6 +184,7 @@ const POLE_SIGNS = {
     ],
     ppm: 80,
     lit: 1.3,
+    group: "tenant",
   } as SignSpec,
 };
 

@@ -20,11 +20,11 @@ export const LEFT = { x0: -38.5, x1: -14.5 };
 // ── Signs (plain lettering in the photo colours; no logos) ───────────────────
 const RED_BOX = "#d42a22";
 export const SIGNS = {
-  ramayanaBig: { w: 24, h: 6.2, bg: RED_BOX, lines: [{ text: "Ramayana", color: "#ffffff", size: 3.4, weight: 600 }], ppm: 48, lit: 1.3 } as SignSpec,
-  bjRoof: { w: 30, h: 4.4, bg: null, lines: [{ text: "Bekasi Junction", color: "#2c4aa6", size: 3.3, weight: 600, italic: false }], ppm: 48, lit: 1.6 } as SignSpec,
-  entRamayanaTop: { w: 20, h: 3.6, bg: null, lines: [{ text: "Ramayana", color: "#d42a22", size: 3.0, weight: 600 }], ppm: 48, lit: 1.6 } as SignSpec,
-  entLotte: { w: 22, h: 3.4, bg: null, lines: [{ text: "LOTTE Mart", color: "#d42a22", size: 3.0, weight: 600 }], ppm: 48, lit: 1.6 } as SignSpec,
-  entRamayanaMid: { w: 16, h: 2.0, bg: null, lines: [{ text: "Ramayana", color: "#d42a22", size: 1.75, weight: 600 }], ppm: 48, lit: 1.6 } as SignSpec,
+  ramayanaBig: { w: 24, h: 6.2, bg: RED_BOX, lines: [{ text: "Ramayana", color: "#ffffff", size: 3.4, weight: 600 }], ppm: 48, group: "tenant", lit: 1.3 } as SignSpec,
+  bjRoof: { w: 30, h: 4.4, bg: null, lines: [{ text: "Bekasi Junction", color: "#2c4aa6", size: 3.3, weight: 600, italic: false }], ppm: 48, lit: 3.2 } as SignSpec,
+  entRamayanaTop: { w: 20, h: 3.6, bg: null, lines: [{ text: "Ramayana", color: "#d42a22", size: 3.0, weight: 600 }], ppm: 48, group: "tenant", lit: 1.6 } as SignSpec,
+  entLotte: { w: 22, h: 3.4, bg: null, lines: [{ text: "LOTTE Mart", color: "#d42a22", size: 3.0, weight: 600 }], ppm: 48, group: "tenant", lit: 1.6 } as SignSpec,
+  entRamayanaMid: { w: 16, h: 2.0, bg: null, lines: [{ text: "Ramayana", color: "#d42a22", size: 1.75, weight: 600 }], ppm: 48, group: "tenant", lit: 1.6 } as SignSpec,
   lotteMasuk: {
     w: 10,
     h: 1.9,
@@ -34,8 +34,9 @@ export const SIGNS = {
     ],
     ppm: 72,
     lit: 1.2,
+    group: "tenant",
   } as SignSpec,
-  lotteLeft: { w: 9, h: 1.6, bg: "#c4261d", lines: [{ text: "LOTTE Mart", color: "#ffffff", size: 1.05, weight: 600 }], ppm: 72, lit: 1.2 } as SignSpec,
+  lotteLeft: { w: 9, h: 1.6, bg: "#c4261d", lines: [{ text: "LOTTE Mart", color: "#ffffff", size: 1.05, weight: 600 }], ppm: 72, group: "tenant", lit: 1.2 } as SignSpec,
 };
 
 // ── Merged detail geometry ───────────────────────────────────────────────────

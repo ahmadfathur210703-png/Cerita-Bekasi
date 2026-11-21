@@ -18,6 +18,8 @@ export type Look = {
   hair?: string;
   hijab?: string;
   helmet?: boolean;
+  /** face mask (pandemic) */
+  mask?: boolean;
 };
 export type Pose = "walk" | "stand" | "ride" | "sit" | "dance";
 
@@ -34,14 +36,14 @@ export const Person: React.FC<{ look: Look; pose: Pose; phase: number; scale?: n
   const shirt = mat(look.shirt, 0.85);
   const pants = mat(look.pants, 0.85);
   const w = Math.sin(phase * Math.PI * 2);
-  let leg = 0, arm = 0, bob = 0, armLift = 0, hip = 0.95;
+  let leg = 0, arm = 0, bob = 0;
+  const hip = 0.95;
   if (pose === "walk") {
     leg = w * 0.45;
     arm = -w * 0.4;
     bob = Math.abs(Math.cos(phase * Math.PI * 2)) * 0.035;
   } else if (pose === "dance") {
     leg = w * 0.25;
-    armLift = 1.9 + Math.sin(phase * Math.PI * 4) * 0.5;
     bob = Math.abs(w) * 0.06;
   } else if (pose === "stand") {
     arm = Math.sin(phase * Math.PI * 2) * 0.04;
@@ -67,7 +69,7 @@ export const Person: React.FC<{ look: Look; pose: Pose; phase: number; scale?: n
           <mesh geometry={cap(0.19, 0.42)} material={shirt} position={[0, 0.38, 0]} castShadow />
           {/* arms (pivot at shoulder) */}
           {[-1, 1].map((side) => (
-            <group key={side} position={[side * 0.25, 0.65, 0]} rotation={[pose === "ride" ? -1.2 : side * arm + 0, 0, side * (0.08 + armLift * 0.9)]}>
+            <group key={side} position={[side * 0.25, 0.65, 0]} rotation={[pose === "ride" ? -1.2 : side * arm + 0, 0, side * (0.08 + (pose === "dance" ? 1.3 + 1.0 * Math.sin(phase * Math.PI * 4 + (side > 0 ? 0 : Math.PI)) : 0))]}>
               <mesh geometry={cap(0.06, 0.5)} material={shirt} position={[0, -0.3, 0]} castShadow />
               <mesh geometry={ball(0.065)} material={skin} position={[0, -0.62, 0]} />
             </group>
@@ -87,6 +89,7 @@ export const Person: React.FC<{ look: Look; pose: Pose; phase: number; scale?: n
             ) : (
               <mesh geometry={halfBall(0.18)} material={mat(look.hair ?? "#1d1a18", 0.8)} position={[0, 0.03, -0.02]} rotation={[-0.25, 0, 0]} castShadow />
             )}
+            {look.mask ? <mesh geometry={ball(0.1)} material={mat("#cfe3ef", 0.8)} position={[0, -0.07, look.kind === "hijab" ? 0.13 : 0.1]} scale={[1.15, 0.7, 0.75]} /> : null}
             {/* eyes: two dark dots, the only face detail */}
             {[-1, 1].map((side) => (
               <mesh key={side} geometry={ball(0.022)} material={mat("#1a1a1a", 0.5)} position={[side * 0.055, 0.02, look.kind === "hijab" ? 0.2 : 0.155]} />

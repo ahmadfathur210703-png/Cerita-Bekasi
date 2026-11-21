@@ -25,9 +25,9 @@ const std = (color: string, roughness = 0.8, metalness = 0, extra: Partial<MeshS
   Object.assign(new MeshStandardMaterial({ color, roughness, metalness }), extra);
 
 /** Lamp-like materials whose glow follows the time of day (0 day … 1 night). */
-const glowing: { m: MeshStandardMaterial; day: number; night: number }[] = [];
-const glow = (m: MeshStandardMaterial, day: number, night: number) => {
-  glowing.push({ m, day, night });
+const glowing: { m: MeshStandardMaterial; day: number; night: number; group: string }[] = [];
+export const glow = (m: MeshStandardMaterial, day: number, night: number, group = "city") => {
+  glowing.push({ m, day, night, group });
   return m;
 };
 
@@ -42,7 +42,7 @@ export const M = {
   steel: std("#c9ccd0", 0.35, 0.8),
   glass: std("#5f7a8c", 0.08, 0.6, { envMapIntensity: 1.3 }),
   glassLight: std("#9fb6c4", 0.06, 0.5, { transparent: true, opacity: 0.55, envMapIntensity: 1.4, depthWrite: false }),
-  glassWin: glow(std("#41545f", 0.12, 0.55, { emissive: new Color("#ffd9a0") }), 0, 0.9),
+  glassWin: glow(std("#41545f", 0.12, 0.55, { emissive: new Color("#ffd9a0") }), 0, 1.2),
   rail: std("#d7dadc", 0.4, 0.6),
   concrete: std("#b9b4aa", 0.92),
   sidewalk: std("#a9a49a", 0.9),
@@ -65,8 +65,8 @@ export const M = {
 };
 
 /** Set the mood: 0 = day, 1 = night (windows, lamps, signs glow). */
-export const setNight = (n: number) => {
-  for (const g of glowing) g.m.emissiveIntensity = g.day + (g.night - g.day) * n;
+export const setNight = (n: number, groups: Record<string, number> = {}) => {
+  for (const g of glowing) g.m.emissiveIntensity = (g.day + (g.night - g.day) * n) * (groups[g.group] ?? 1);
 };
 
 const matCache = new Map<string, Material>();
@@ -89,6 +89,8 @@ export type SignSpec = {
   border?: string;
   /** Lit at night (emissive from the same picture). */
   lit?: number;
+  /** glow group: "tenant" signs can be switched off (2026) while the city stays lit */
+  group?: string;
 };
 
 const texCache = new Map<string, CanvasTexture>();
@@ -156,7 +158,7 @@ export const signMaterial = (s: SignSpec) => {
     emissiveMap: t,
     emissiveIntensity: 0,
   });
-  if (s.lit) glow(m, 0, s.lit);
+  if (s.lit) glow(m, 0, s.lit, s.group ?? "city");
   signMatCache.set(key, m);
   return m;
 };
