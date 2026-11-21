@@ -276,9 +276,9 @@ const Unit: React.FC<{ w: number; d?: number; sign?: SignSpec; signBack?: MeshSt
       <BB a={[-w / 2, 0, -d]} b={[w / 2, CORR.h, -d + 0.1]} m={inner} />
       <BB a={[-w / 2, 0, -d]} b={[-w / 2 + 0.1, CORR.h, 0]} m={mat("#e2ddd3", 0.85)} />
       <BB a={[w / 2 - 0.1, 0, -d]} b={[w / 2, CORR.h, 0]} m={mat("#e2ddd3", 0.85)} />
-      <BB a={[-w / 2, CORR.h - 0.6, -d]} b={[w / 2, CORR.h - 0.5, 0]} m={inner} cast={false} />
+      <BB a={[-w / 2, CORR.h - 0.6, -d]} b={[w / 2, CORR.h - 0.5, -0.25]} m={inner} cast={false} />
       {/* fascia + sign */}
-      <BB a={[-w / 2, H, -0.2]} b={[w / 2, CORR.h, 0]} m={fascia} />
+      <BB a={[-w / 2, H, -0.2]} b={[w / 2, CORR.h + 0.2, 0]} m={fascia} />
       {sign ? <Sign p={[0, signY, 0.03]} spec={sign} back={signBack} depth={signBack ? 0.08 : 0} /> : null}
       {children}
       {/* the rolling shutter: rolled up inside the box above the opening when open */}

@@ -32,7 +32,7 @@ export const Cy: React.FC<Common & { p: V3; r: number; h: number; r2?: number; s
 /** A lettered sign (plane facing +z unless rotated) centred at p. */
 export const Sign: React.FC<{ p: V3; spec: SignSpec; rot?: V3; back?: Material; depth?: number }> = ({ p, spec, rot, back, depth = 0 }) => (
   <group position={p} rotation={rot}>
-    {back && depth > 0 ? <mesh geometry={boxGeo(spec.w, spec.h, depth)} material={back} position={[0, 0, -depth / 2 - 0.005]} castShadow receiveShadow /> : null}
+    {back && depth > 0 ? <mesh geometry={boxGeo(spec.w, spec.h, depth)} material={back} position={[0, 0, -depth / 2 - 0.025]} castShadow receiveShadow /> : null}
     <mesh geometry={planeGeo(spec.w, spec.h)} material={signMaterial(spec)} castShadow={!spec.bg} receiveShadow />
   </group>
 );

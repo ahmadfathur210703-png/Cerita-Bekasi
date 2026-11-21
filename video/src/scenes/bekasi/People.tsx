@@ -41,10 +41,10 @@ export const Person: React.FC<{ look: Look; pose: Pose; phase: number; scale?: n
   if (pose === "walk") {
     leg = w * 0.45;
     arm = -w * 0.4;
-    bob = Math.abs(Math.cos(phase * Math.PI * 2)) * 0.035;
+    bob = (1 - Math.cos(phase * Math.PI * 4)) * 0.0175;
   } else if (pose === "dance") {
-    leg = w * 0.25;
-    bob = Math.abs(w) * 0.06;
+    leg = w * 0.2;
+    bob = (1 - Math.cos(phase * Math.PI * 4)) * 0.025;
   } else if (pose === "stand") {
     arm = Math.sin(phase * Math.PI * 2) * 0.04;
   }
@@ -69,7 +69,7 @@ export const Person: React.FC<{ look: Look; pose: Pose; phase: number; scale?: n
           <mesh geometry={cap(0.19, 0.42)} material={shirt} position={[0, 0.38, 0]} castShadow />
           {/* arms (pivot at shoulder) */}
           {[-1, 1].map((side) => (
-            <group key={side} position={[side * 0.25, 0.65, 0]} rotation={[pose === "ride" ? -1.2 : side * arm + 0, 0, side * (0.08 + (pose === "dance" ? 1.3 + 1.0 * Math.sin(phase * Math.PI * 4 + (side > 0 ? 0 : Math.PI)) : 0))]}>
+            <group key={side} position={[side * 0.25, 0.65, 0]} rotation={[pose === "ride" ? -1.2 : side * arm + 0, 0, side * (0.08 + (pose === "dance" ? 1.4 + 0.7 * Math.sin(phase * Math.PI * 2 + (side > 0 ? 0 : Math.PI)) : 0))]}>
               <mesh geometry={cap(0.06, 0.5)} material={shirt} position={[0, -0.3, 0]} castShadow />
               <mesh geometry={ball(0.065)} material={skin} position={[0, -0.62, 0]} />
             </group>

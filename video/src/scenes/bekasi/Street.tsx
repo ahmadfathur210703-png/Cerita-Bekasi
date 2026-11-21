@@ -42,9 +42,9 @@ const Ground: React.FC = () => {
       <Barriers />
       {/* forecourt + sidewalks */}
       <BB a={[-120, 0, 0]} b={[SIDE_ROAD.x0, 0.12, 12]} m={M.concrete} cast={false} />
-      <BB a={[ROAD.x0, 0, 12]} b={[ROAD.x1, 0.22, ROAD.z0]} m={M.sidewalk} cast={false} />
+      <BB a={[ROAD.x0, 0, 12]} b={[ROAD.x1, 0.22, ROAD.z0 - 0.03]} m={M.sidewalk} cast={false} />
       <BB a={[ROAD.x0, 0, ROAD.z0 - 0.25]} b={[ROAD.x1, 0.26, ROAD.z0]} m={M.curb} cast={false} />
-      <BB a={[ROAD.x0, 0, ROAD.z1]} b={[ROAD.x1, 0.22, 35]} m={M.sidewalk} cast={false} />
+      <BB a={[ROAD.x0, 0, ROAD.z1 + 0.03]} b={[ROAD.x1, 0.22, 35]} m={M.sidewalk} cast={false} />
       <BB a={[ROAD.x0, 0, ROAD.z1]} b={[ROAD.x1, 0.26, ROAD.z1 + 0.25]} m={M.curb} cast={false} />
       {/* planters along the forecourt edge */}
       {[-58, -40, 20, 36, 52].map((x, i) => (

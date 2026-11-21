@@ -162,8 +162,12 @@ export const entranceGround = (x: number, z: number) => {
   if (x < x0 - 2 || x > x1 + 2 || z < zf - 2) return 0;
   if (z < STAIRS.z0) return STAIRS.top;
   if (z > STAIRS.z1 || x < x0 + 1 || x > x1 - 1) return 0;
-  const k = Math.ceil((STAIRS.z1 - z) / ((STAIRS.z1 - STAIRS.z0) / STAIRS.steps));
-  return Math.min(STAIRS.steps, Math.max(0, k)) * STAIRS.rise;
+  // walking up: each step is climbed smoothly over the first 45 % of its tread (no one-frame snap)
+  const run = (STAIRS.z1 - STAIRS.z0) / STAIRS.steps;
+  const u = (STAIRS.z1 - z) / run; // 0 at the street edge … steps at the top
+  const i = Math.floor(u), f = u - i;
+  const e = Math.min(1, f / 0.45);
+  return Math.min(STAIRS.steps, i + e * e * (3 - 2 * e)) * STAIRS.rise;
 };
 export const ENTRANCE_COLUMNS = [-12.5, -4.5, 3.5, 10.5];
 

@@ -23,9 +23,10 @@ import { entranceGround } from "./Mall.tsx";
 
 /** Camera keys in seconds: [t, px,py,pz, tx,ty,tz, fov]. */
 const cam = (rows: number[][]): Key[] => rows.map((r) => ({ f: r[0], v: r.slice(1) }));
-const shotFrom = (k: Key[], t: number, near = 0.3): Shot => {
+const shotFrom = (k: Key[], t: number, near = 0.5): Shot => {
   const v = sample(k, t);
-  return { pos: [v[0], v[1], v[2]], target: [v[3], v[4], v[5]], fov: v[6], near, far: 4000 };
+  const inside = v[0] > IN_X / 2;
+  return { pos: [v[0], v[1], v[2]], target: [v[3], v[4], v[5]], fov: v[6], near: inside ? 0.3 : near, far: inside ? 300 : 3000 };
 };
 
 const vo = (s: number) => s + OFFSET;
@@ -173,10 +174,9 @@ const Dancers: React.FC<{ t: number; style: "zumba" | "line"; seed: number }> = 
       const look: Look = { ...randomLook(r, r() < 0.5 ? "hijab" : "woman"), shirt: ["#ff5fa2", "#38c6d9", "#f7d23e", "#7ed957", "#ff8c42"][(ro * cols + c) % 5] };
       const bx = -7 + (c * 14) / (cols - 1), bz = -4 - ro * 2.6;
       if (style === "zumba") {
-        const bob = Math.sin((t * 2.2 + c * 0.1) * Math.PI) * 0.05;
         out.push(
-          <Solid key={`${ro},${c}`} id={`zb${ro}${c}`} kind="body" position={[bx, 0.06 + Math.max(0, bob), bz]}>
-            <Person look={look} pose="dance" phase={t * 1.1 + ro * 0.05} />
+          <Solid key={`${ro},${c}`} id={`zb${ro}${c}`} kind="body" position={[bx, 0.06, bz]}>
+            <Person look={look} pose="dance" phase={t * 0.8 + ro * 0.05} />
           </Solid>,
         );
       } else {
