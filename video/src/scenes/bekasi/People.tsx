@@ -145,9 +145,10 @@ export const makeWalkers = (seed: number, n: number, opts: { x0: number; x1: num
   return out;
 };
 
-const WalkerFig: React.FC<{ w: Walker; t: number; along: "x" | "z"; tag: boolean }> = ({ w, t, along, tag }) => {
+const WalkerFig: React.FC<{ w: Walker; t: number; along: "x" | "z"; tag: boolean; ground?: (x: number, z: number) => number }> = ({ w, t, along, tag, ground }) => {
   const d = w.v * t * w.dir;
   const pos: V3 = along === "x" ? [w.from[0] + d, w.from[1], w.from[2]] : [w.from[0], w.from[1], w.from[2] + d];
+  if (ground) pos[1] += ground(pos[0], pos[2]);
   const yaw = along === "x" ? (w.dir > 0 ? Math.PI / 2 : -Math.PI / 2) : w.dir > 0 ? 0 : Math.PI;
   const stride = w.look.kind === "kid" ? 0.9 : 1.35;
   const fig = <Person look={w.look} pose="walk" phase={w.phase0 + (w.v * t) / stride} />;
@@ -162,10 +163,10 @@ const WalkerFig: React.FC<{ w: Walker; t: number; along: "x" | "z"; tag: boolean
   );
 };
 
-export const Crowd: React.FC<{ walkers: Walker[]; t: number; along?: "x" | "z"; tag?: boolean }> = ({ walkers, t, along = "x", tag = true }) => (
+export const Crowd: React.FC<{ walkers: Walker[]; t: number; along?: "x" | "z"; tag?: boolean; ground?: (x: number, z: number) => number }> = ({ walkers, t, along = "x", tag = true, ground }) => (
   <group>
     {walkers.map((w) => (
-      <WalkerFig key={w.id} w={w} t={t} along={along} tag={tag} />
+      <WalkerFig key={w.id} w={w} t={t} along={along} tag={tag} ground={ground} />
     ))}
   </group>
 );

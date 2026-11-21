@@ -19,6 +19,7 @@ import { Person, type Look } from "./People.tsx";
 import { Solid } from "../../core/qa/scene-qa.tsx";
 import { YearBadge } from "./Overlay.tsx";
 import type { V3 } from "./prim.tsx";
+import { entranceGround } from "./Mall.tsx";
 
 /** Camera keys in seconds: [t, px,py,pz, tx,ty,tz, fov]. */
 const cam = (rows: number[][]): Key[] => rows.map((r) => ({ f: r[0], v: r.slice(1) }));
@@ -44,12 +45,12 @@ type ShotDef = {
 
 const sidewalk: Walker[] = makeWalkers(21, 46, { x0: -70, x1: 75, z0: 12.3, z1: 14.9, gap: 0.85, families: true });
 const farSidewalk: Walker[] = makeWalkers(22, 24, { x0: -60, x1: 60, z0: 31.6, z1: 34.8, gap: 1.0 });
-const forecourt: Walker[] = makeWalkers(23, 34, { x0: -60, x1: 58, z0: 1.4, z1: 9.6, gap: 0.95, families: true });
+const forecourt: Walker[] = makeWalkers(23, 24, { x0: -60, x1: 58, z0: 6.7, z1: 9.6, gap: 0.95, families: true });
 /** Families heading into the glass entrance (walk −z toward the doors). */
 const toDoors: Walker[] = (() => {
   const r = mulberry32(24);
   const out: Walker[] = [];
-  const xs = [-9.6, -8.4, -6.0, -4.8, -2.2, -1.0, 1.6, 2.8, 5.4, 6.6];
+  const xs = [-10.5, -9.3, -7.2, -6.0, -2.6, -1.4, 0.8, 2.0, 5.6, 6.8];
   xs.forEach((x, i) => {
     out.push({ id: `door${i}`, look: randomLook(r, i % 3 === 2 ? "kid" : undefined), from: [x, 0.13, 11.7 - (i % 3) * 0.55], dir: -1, v: 0.85, phase0: r() });
   });
@@ -73,7 +74,7 @@ const avoid = (ws: Walker[], t0: number, t1: number, x0: number, x1: number) =>
     const a = w.from[0] + w.dir * w.v * t0, b = w.from[0] + w.dir * w.v * t1;
     return Math.max(a, b) < x0 || Math.min(a, b) > x1;
   });
-const S2 = { sidewalk: avoid(forecourt, 9, 16, -13, 9) };
+const S2 = { sidewalk: avoid(forecourt, 9, 16, -18, 16) };
 const S2walk = sidewalk;
 const S2far = avoid(farSidewalk, 9, 16, -27, -4);
 
@@ -303,7 +304,7 @@ const REST = (): ShotDef[] => [
     a: vo(43.8),
     mood: "covid",
     extras: () => <Growth towers={1} malls={1} />,
-    camera: (t) => shotFrom(cam([[0, -14, 3.4, 32.2, -2, 10, 3, 62], [6.45, -9, 3.3, 31.8, -1, 10, 3, 58]]), t),
+    camera: (t) => shotFrom(cam([[0, -13, 3.4, 32.2, -1, 11.5, 3, 76], [6.45, -8, 3.3, 31.8, -1, 11.5, 3, 72]]), t),
     life: (t) => (
       <>
         <Traffic seed={11} density={0.1} t={t} />
@@ -451,7 +452,7 @@ const REST = (): ShotDef[] => [
     night: (t) => 0.3 + 0.1 * (t / 4.25),
     tenants: 0,
     extras: () => <Growth towers={1} malls={1} />,
-    camera: (t) => shotFrom(cam([[0, -16, 3.4, 32.4, -2, 10, 3, 62], [4.25, -11, 3.4, 32.2, -1, 10.5, 3, 60]]), t),
+    camera: (t) => shotFrom(cam([[0, -14, 3.4, 32.4, -1, 11.5, 3, 76], [4.25, -10, 3.4, 32.2, -1, 11.8, 3, 73]]), t),
     life: (t) => (
       <>
         <Traffic seed={25} density={0.6} t={t} />
@@ -511,7 +512,7 @@ export const SHOTS: ShotDef[] = [
       <>
         <Traffic seed={1} density={1} t={t} />
         <Crowd walkers={sidewalk} t={t} tag={false} />
-        <Crowd walkers={forecourt} t={t} tag={false} />
+        <Crowd walkers={avoid(forecourt, 0, 9, -18, 16)} t={t} tag={false} />
         <Crowd walkers={farSidewalk} t={t} tag={false} />
       </>
     ),
@@ -523,8 +524,8 @@ export const SHOTS: ShotDef[] = [
     camera: (t) =>
       shotFrom(
         cam([
-          [0, -18, 3.4, 32.4, -3, 9.5, 3, 64],
-          [6.65, -10, 3.5, 32.2, -1, 10, 3, 60],
+          [0, -16, 3.4, 32.4, -2, 11, 3, 76],
+          [6.65, -9, 3.5, 32.2, -1, 11.5, 3, 72],
         ]),
         t,
       ),
@@ -534,7 +535,7 @@ export const SHOTS: ShotDef[] = [
         <Crowd walkers={S2walk} t={t + 9} />
         <Crowd walkers={S2.sidewalk} t={t + 9} />
         <Crowd walkers={S2far} t={t + 9} />
-        <Crowd walkers={toDoors} t={t} along="z" />
+        <Crowd walkers={toDoors} t={t} along="z" ground={entranceGround} />
       </>
     ),
   },
@@ -556,7 +557,7 @@ export const SHOTS: ShotDef[] = [
         <Traffic seed={3} density={1} t={t + 3} />
         <Standers list={terrace} t={t} />
         <Crowd walkers={sidewalk} t={t + 16} />
-        <Crowd walkers={forecourt} t={t + 16} />
+        <Crowd walkers={avoid(forecourt, 16, 22, -18, 16)} t={t + 16} />
       </>
     ),
   },

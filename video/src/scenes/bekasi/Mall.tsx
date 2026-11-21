@@ -5,8 +5,8 @@
 //   Floors: 0 · 5.5 · 10.3 · 15.1 · 19.9 (parapet to 21.4)
 
 import React, { useMemo } from "react";
-import { BoxGeometry, type BufferGeometry, Matrix4, SphereGeometry } from "three";
-import { M, mergeAll, type SignSpec } from "./kit.ts";
+import { BoxGeometry, type BufferGeometry, Matrix4, MeshStandardMaterial, SphereGeometry } from "three";
+import { M, mat, mergeAll, type SignSpec } from "./kit.ts";
 import { B, BB, Cy, Sign, type V3 } from "./prim.tsx";
 import { cached } from "../../kits/worldforge/geo.ts";
 
@@ -155,34 +155,70 @@ const LeftWing: React.FC = () => {
   );
 };
 
+/** Entrance platform + stairs as a height field (people walking in follow it). */
+export const STAIRS = { z0: 9.5, z1: 11.75, steps: 5, rise: 0.15, top: 0.75 };
+export const entranceGround = (x: number, z: number) => {
+  const { x0, x1, zf } = ENTRANCE;
+  if (x < x0 - 2 || x > x1 + 2 || z < zf - 2) return 0;
+  if (z < STAIRS.z0) return STAIRS.top;
+  if (z > STAIRS.z1 || x < x0 + 1 || x > x1 - 1) return 0;
+  const k = Math.ceil((STAIRS.z1 - z) / ((STAIRS.z1 - STAIRS.z0) / STAIRS.steps));
+  return Math.min(STAIRS.steps, Math.max(0, k)) * STAIRS.rise;
+};
+export const ENTRANCE_COLUMNS = [-12.5, -4.5, 3.5, 10.5];
+
+const SILVER_GLASS = new MeshStandardMaterial({ color: "#c9d2d6", roughness: 0.1, metalness: 0.55, envMapIntensity: 1.3 });
+const LIGHT_FRAME = new MeshStandardMaterial({ color: "#c3c7ca", roughness: 0.45, metalness: 0.35 });
+const WHITE = new MeshStandardMaterial({ color: "#efefeb", roughness: 0.6 });
+const BJ_BOX: SignSpec = { w: 26, h: 3.6, bg: null, lines: [{ text: "Bekasi Junction", color: "#2c4aa6", size: 2.9, weight: 600 }], ppm: 48, lit: 3.2 };
+
+/** The glass entrance box as it looks today (reference: the frontal photo): silver glass, light frame,
+ *  "Bekasi Junction" lettering on top, a heavy black canopy on white columns, red-white bunting, wide stairs. */
 const EntranceBox: React.FC = () => {
-  const { x0, x1, zf, h } = ENTRANCE;
+  const { x0, x1, zf } = ENTRANCE;
   const cx = (x0 + x1) / 2;
-  const F = 1.1; // frame thickness
+  const F = 1.2; // frame thickness
+  const top = 20.2;
+  const { z0, z1, steps, rise } = STAIRS;
+  const run = (z1 - z0) / steps;
   return (
     <group>
-      {/* the glass volume */}
-      <BB a={[x0 + F, 8.4, -1]} b={[x1 - F, 17, zf - 0.6]} m={M.glass} />
-      <mesh geometry={mullions("entGrid", x0 + F, x1 - F, 8.4, 17, zf - 0.5, 10, 5, 0.14, 0.2)} material={M.frame} castShadow />
-      {/* grey frame */}
-      <BB a={[x0, 0, -1]} b={[x0 + F, h, zf]} m={M.frame} />
-      <BB a={[x1 - F, 0, -1]} b={[x1, h, zf]} m={M.frame} />
-      <BB a={[x0, 17, -1]} b={[x1, h, zf]} m={M.frame} />
-      <BB a={[x0, 5.6, -1]} b={[x1, 8.4, zf]} m={M.frame} />
-      {/* lettering */}
-      <Sign p={[cx, h + 1.85, zf - 1.2]} spec={SIGNS.entRamayanaTop} />
-      <B p={[cx, h + 0.15, zf - 1.3]} s={[18, 0.3, 0.6]} m={M.poleDark} />
-      <Sign p={[cx, 19.5, zf + 0.02]} spec={SIGNS.entLotte} />
-      <Sign p={[cx, 7.25, zf + 0.02]} spec={SIGNS.entRamayanaMid} />
-      {/* drop-off canopy and doors */}
-      <BB a={[x0 - 2, 5.0, zf]} b={[x1 + 2, 5.6, zf + 5]} m={M.bodyDark} />
-      <BB a={[x0 - 2, 4.7, zf + 4.8]} b={[x1 + 2, 5.6, zf + 5.1]} m={M.frame} />
-      {[x0 - 1.2, x1 + 1.2].map((px, i) => (
-        <Cy key={i} p={[px, 2.5, zf + 4.4]} r={0.22} h={5} m={M.frame} seg={12} />
+      {/* silver glass volume with a recessed inner frame and a light grid */}
+      <BB a={[x0 + F, 7.6, -1]} b={[x1 - F, top - 1.2, zf - 0.7]} m={SILVER_GLASS} />
+      <mesh geometry={mullions("entGrid2", x0 + F, x1 - F, 7.6, top - 1.2, zf - 0.6, 8, 6, 0.12, 0.16)} material={LIGHT_FRAME} castShadow />
+      <BB a={[x0 + F + 1.4, 15.0, zf - 0.75]} b={[x1 - F - 1.4, 15.5, zf - 0.2]} m={LIGHT_FRAME} />
+      <BB a={[x0 + F + 1.4, 7.6, zf - 0.75]} b={[x0 + F + 1.9, 15.5, zf - 0.2]} m={LIGHT_FRAME} />
+      <BB a={[x1 - F - 1.9, 7.6, zf - 0.75]} b={[x1 - F - 1.4, 15.5, zf - 0.2]} m={LIGHT_FRAME} />
+      {/* outer frame */}
+      <BB a={[x0, 0, -1]} b={[x0 + F, top, zf]} m={LIGHT_FRAME} />
+      <BB a={[x1 - F, 0, -1]} b={[x1, top, zf]} m={LIGHT_FRAME} />
+      <BB a={[x0, top - 1.2, -1]} b={[x1, top, zf]} m={LIGHT_FRAME} />
+      {/* lettering on top */}
+      <Sign p={[cx, top + 2.0, zf - 1.6]} spec={BJ_BOX} />
+      <B p={[cx, top + 0.12, zf - 1.7]} s={[24, 0.25, 0.5]} m={M.poleDark} />
+      {/* heavy black canopy, white fascia, red-white bunting */}
+      <BB a={[x0 - 2.5, 6.6, -1]} b={[x1 + 2.5, 7.6, zf + 4]} m={new MeshStandardMaterial({ color: "#1c1d1f", roughness: 0.6 })} />
+      <BB a={[x0 + F, 5.8, zf - 1.6]} b={[x1 - F, 6.6, zf - 1.3]} m={WHITE} />
+      <BB a={[x0 - 1.5, 6.25, zf + 3.85]} b={[x1 + 1.5, 6.6, zf + 3.95]} m={new MeshStandardMaterial({ color: "#c8221c", roughness: 0.8 })} cast={false} />
+      <BB a={[x0 - 1.5, 5.85, zf + 3.85]} b={[x1 + 1.5, 6.25, zf + 3.95]} m={WHITE} cast={false} />
+      {ENTRANCE_COLUMNS.map((px) => (
+        <BB key={px} a={[px - 0.4, STAIRS.top, zf + 3.0]} b={[px + 0.4, 6.6, zf + 3.8]} m={WHITE} />
       ))}
-      <BB a={[x0 + F, 0, zf - 1.8]} b={[x1 - F, 5.0, zf - 1.5]} m={M.glassWin} />
-      <mesh geometry={mullions("entDoors", x0 + F, x1 - F, 0, 5.0, zf - 1.4, 12, 2, 0.12, 0.12)} material={M.frame} />
-      <BB a={[x0, 0, -1]} b={[x1, 0.12, zf + 5]} m={M.curb} cast={false} />
+      {/* doors */}
+      <BB a={[x0 + F, STAIRS.top, zf - 1.8]} b={[x1 - F, 5.8, zf - 1.5]} m={M.glassWin} />
+      <mesh geometry={mullions("entDoors2", x0 + F, x1 - F, STAIRS.top, 5.8, zf - 1.4, 10, 2, 0.12, 0.12)} material={M.frame} />
+      {/* raised lobby platform + stairs + planters at the sides */}
+      <BB a={[x0 - 2, 0, zf - 2]} b={[x1 + 2, STAIRS.top, z0]} m={mat("#4d4f52", 0.7)} />
+      {Array.from({ length: steps }, (_, i) => (
+        <BB key={i} a={[x0 + 1, 0, z0]} b={[x1 - 1, (steps - i) * rise, z0 + (i + 1) * run]} m={i % 2 ? mat("#55585b", 0.7) : mat("#4a4c4f", 0.7)} />
+      ))}
+      {[x0 - 1, x1 + 1].map((px) => (
+        <group key={px}>
+          <BB a={[px - 1, 0, z0]} b={[px + 1, 0.9, z1]} m={mat("#7a7d80", 0.8)} />
+          <B p={[px, 1.3, (z0 + z1) / 2]} s={[1.8, 0.9, 1.8]} m={M.frondDry} />
+          <B p={[px, 1.5, (z0 + z1) / 2]} s={[1.3, 0.9, 1.3]} m={M.frond} />
+        </group>
+      ))}
     </group>
   );
 };
