@@ -39,4 +39,4 @@ export const LINES: Line[] = [
 /** Closing cards, exactly as in the brief. */
 export const END_TITLE = "BEKASI JUNCTION";
 export const END_LINE = "Dulu menjadi tempat berkumpul, kini menjadi bagian dari kenangan.";
-export const END_QUESTION = "Kalau kamu sebagai warga Bekasi, punya kenangan apa sama mall ini?";
+export const END_QUESTION = "Kalau kamu sebagai warga Bekasi, punya kenangan apa sama Bekasi Junction?";

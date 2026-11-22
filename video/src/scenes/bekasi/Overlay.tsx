@@ -125,7 +125,7 @@ export const EndCards: React.FC<{ T: number; a: number; q: number; end: number }
       </div>
       <div style={{ position: "absolute", left: 100, right: 100, top: 1300, opacity: o2 }}>
         <div style={{ fontSize: 56, fontWeight: 700, lineHeight: 1.25 }}>
-          Kalau kamu sebagai warga Bekasi, punya kenangan apa sama mall ini?
+          Kalau kamu sebagai warga Bekasi, punya kenangan apa sama Bekasi Junction?
         </div>
       </div>
     </div>
